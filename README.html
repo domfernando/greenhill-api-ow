@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Unit&period;API</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="unitapi">Unit.API</h1>
+<h2 id="visão-geral">Visão Geral</h2>
+<p>Este projeto é uma API desenvolvida em .NET 8, utilizando C# 12, que expõe endpoints para gerenciamento de usuários, filas de mensagens, perfis, serviços e integrações externas. A arquitetura segue boas práticas de separação de camadas, utilizando injeção de dependência, FluentValidation e Entity Framework Core.</p>
+<h2 id="uso-das-controllers">Uso das Controllers</h2>
+<p>As controllers são responsáveis por expor os endpoints HTTP para interação com os recursos do sistema. Abaixo estão as principais controllers e seus propósitos:</p>
+<h3 id="1-usuariocontroller">1. <strong>UsuarioController</strong></h3>
+<p>Gerencia operações relacionadas a usuários do sistema.</p>
+<ul>
+<li><strong>POST /api/usuario</strong>: Cria um novo usuário.</li>
+<li><strong>GET /api/usuario/{id}</strong>: Retorna os dados de um usuário específico.</li>
+<li><strong>PUT /api/usuario/{id}</strong>: Atualiza informações de um usuário.</li>
+<li><strong>DELETE /api/usuario/{id}</strong>: Remove um usuário do sistema.</li>
+</ul>
+<h3 id="2-queuecontroller">2. <strong>QueueController</strong></h3>
+<p>Gerencia a fila de mensagens para processamento assíncrono.</p>
+<ul>
+<li><strong>POST /api/queue</strong>: Adiciona uma nova mensagem à fila.</li>
+<li><strong>GET /api/queue</strong>: Lista todas as mensagens da fila.</li>
+<li><strong>GET /api/queue/{id}</strong>: Retorna detalhes de uma mensagem específica.</li>
+<li><strong>POST /api/queue/process</strong>: Processa mensagens pendentes na fila.</li>
+</ul>
+<h3 id="3-perfilcontroller">3. <strong>PerfilController</strong></h3>
+<p>Gerencia perfis de usuários.</p>
+<ul>
+<li><strong>GET /api/perfil</strong>: Lista todos os perfis.</li>
+<li><strong>POST /api/perfil</strong>: Cria um novo perfil.</li>
+<li><strong>PUT /api/perfil/{id}</strong>: Atualiza um perfil existente.</li>
+<li><strong>DELETE /api/perfil/{id}</strong>: Remove um perfil.</li>
+</ul>
+<h3 id="4-servicocontroller">4. <strong>ServicoController</strong></h3>
+<p>Gerencia serviços disponíveis no sistema.</p>
+<ul>
+<li><strong>GET /api/servico</strong>: Lista todos os serviços.</li>
+<li><strong>POST /api/servico</strong>: Cria um novo serviço.</li>
+<li><strong>PUT /api/servico/{id}</strong>: Atualiza um serviço.</li>
+<li><strong>DELETE /api/servico/{id}</strong>: Remove um serviço.</li>
+</ul>
+<h3 id="5-evolutioncontroller">5. <strong>EvolutionController</strong></h3>
+<p>Integração com serviços externos, como envio de mensagens via WhatsApp.</p>
+<h2 id="evolutionservice">EvolutionService</h2>
+<p>O <strong>EvolutionService</strong> é responsável por integrar a API com plataformas externas de mensageria, como o WhatsApp. Ele permite o envio automatizado de mensagens para contatos cadastrados, sendo utilizado principalmente pelo sistema de filas (QueueService) para processar e disparar notificações ou comunicações automáticas. Os métodos do EvolutionService são consumidos internamente pelas controllers e serviços, facilitando a comunicação assíncrona e a automação de processos de envio de mensagens.</p>
+<h2 id="como-usar">Como Usar</h2>
+<ol>
+<li><strong>Configuração:</strong> Ajuste as configurações de conexão e variáveis de ambiente no <code>appsettings.json</code>.</li>
+<li><strong>Execução:</strong> Execute o projeto via Visual Studio ou CLI (<code>dotnet run</code>).</li>
+<li><strong>Documentação:</strong> Utilize o Swagger (normalmente disponível em <code>/swagger</code>) para explorar e testar os endpoints.</li>
+</ol>
+<h2 id="observações">Observações</h2>
+<ul>
+<li>Todas as rotas seguem o padrão RESTful.</li>
+<li>A validação de dados é feita via FluentValidation.</li>
+<li>O projeto utiliza injeção de dependência para todos os serviços e repositórios.</li>
+</ul>
+<hr>
+<p>Para dúvidas ou contribuições, consulte a documentação interna ou entre em contato com o time de desenvolvimento.</p>
+
+            
+            
+        </body>
+        </html>

@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Unit.Application.DTOs.Request;
+using Unit.Application.Services;
 using Unit.Application.Sevices;
 using Unit.Application.Util;
+using Unit.Infra.Services;
 
 namespace Unit.API.Controllers
 {
@@ -15,11 +17,13 @@ namespace Unit.API.Controllers
     {
         readonly ILogger<PapelController> _logger;
         readonly Unit.Application.Sevices.IPapelService _Service;
+        readonly IPubService _pubService;
 
-        public PapelController(ILogger<PapelController> logger, Unit.Application.Sevices.IPapelService service)
+        public PapelController(ILogger<PapelController> logger, Unit.Application.Sevices.IPapelService service, IPubService pubService)
         {
             _logger = logger;
             _Service = service;
+            _pubService = pubService;
         }
 
         #region CRUD
@@ -69,6 +73,35 @@ namespace Unit.API.Controllers
         {
             command.Id = id;
             var dados = await _Service.Update(command);
+            if (!dados.Success)
+            {
+                return BadRequest(dados);
+            }
+
+            return Ok(dados);
+        }
+
+        [HttpPost]
+        [Route("removerPubPapel")]
+        [Authorize]
+        public async Task<IActionResult> RemovePerfil([FromBody] RemovePubPapelRequest command)
+        {
+            var dados = await _pubService.RemPapel(command.Id);
+
+            if (!dados.Success)
+            {
+                return BadRequest(dados);
+            }
+
+            return Ok(dados);
+        }
+
+        [HttpPost]
+        [Route("adicionarPubPapel")]
+        [Authorize]
+        public async Task<IActionResult> AdicionaPerfil([FromBody] AdicionaPubPapelRequest command)
+        {
+            var dados = await _pubService.AddPapel(command.PubId, command.PapelId);
             if (!dados.Success)
             {
                 return BadRequest(dados);

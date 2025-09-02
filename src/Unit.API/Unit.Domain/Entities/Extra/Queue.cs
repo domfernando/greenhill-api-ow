@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unit.Domain.Entities.Cadastro;
 
 namespace Unit.Domain.Entities.Extra
 {
@@ -73,5 +74,23 @@ namespace Unit.Domain.Entities.Extra
                 return status;
             }
         }
+    }
+
+    public class DiscursoNotificacao : EntidadeBase
+    {
+        public int DiscursoID { get; set; }
+        public virtual Discurso Discurso { get; set; }
+        public int QueueID { get; set; }
+        public string Tipo { get; set; }
+        public virtual Queue Queue { get; set; }
+    }
+
+    public class ArranjoNotificacao : EntidadeBase
+    {
+        public int ArranjoID { get; set; }
+        public virtual Arranjo Arranjo { get; set; }
+        public int QueueID { get; set; }
+        public string Tipo { get; set; }
+        public virtual Queue Queue { get; set; }
     }
 }

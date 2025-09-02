@@ -16,9 +16,23 @@ namespace Unit.Application.Base
         IRepository<Papel> Papeis { get; }
         IRepository<Pessoa> Pessoas { get; }
         IRepository<Endereco> Enderecos { get; }
-        IRepository<PessoaPapel> PessoaPapeis { get; }
+        IRepository<PubPapel> PubPapeis { get; }
         IRepository<PessoaEndereco> PessoaEnderecos { get; }
-
+        IRepository<Cong> Congs { get; }
+        IRepository<Grupo> Grupos { get; }
+        IRepository<GrupoPub> GrupoPubs { get; }
+        IRepository<Pub> Pubs { get; }
+        IRepository<Arranjo> Arranjos { get; }
+        IRepository<NVMC> NVMCs { get; }
+        IRepository<NVMCParte> NVMCPartes { get; }
+        IRepository<Discurso> Discursos { get; }
+        IRepository<Tema> Temas { get; }
+        IRepository<OradorTema> OradorTemas { get; }
+        IRepository<DiscursoNotificacao> DiscursoNotificacoes { get; }
+        IRepository<ArranjoNotificacao> ArranjoNotificacoes { get; }
+        IRepository<Evento> Eventos { get; }
+        IRepository<EventoPapel> EventoPapeis { get; }
+        IRepository<Relatorio> Relatorios { get; }
         Task<int> CommitAsync();
     }
 }

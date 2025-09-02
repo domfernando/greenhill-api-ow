@@ -21,6 +21,9 @@ namespace Unit.Application.DTOs.Response
         public string Email { get; set; }
         public string UltimoLogin { get; set; }
         public List<UsuarioPerfilResponse> Perfis { get; set; }
+        public int? PubId { get; set; }
+        public List<PubPapelResponse> Papeis { get; set; }
+        public string? Priv { get; set; }
     }
 
     public class UsuarioCRUDResponse: BaseResponse

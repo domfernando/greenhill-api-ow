@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unit.Application.Base;
+﻿using Unit.Application.Base;
 using Unit.Domain.Entities.Acesso;
 using Unit.Domain.Entities.Cadastro;
 using Unit.Domain.Entities.Config;
@@ -24,8 +19,23 @@ namespace Unit.Infra.Repositories
         public IRepository<Papel> Papeis { get; }
         public IRepository<Pessoa> Pessoas { get; }
         public IRepository<Endereco> Enderecos { get; }
-        public IRepository<PessoaPapel> PessoaPapeis { get; }
+        public IRepository<PubPapel> PubPapeis { get; }
         public IRepository<PessoaEndereco> PessoaEnderecos { get; }
+        public IRepository<Cong> Congs { get; }
+        public IRepository<Grupo> Grupos { get; }
+        public IRepository<GrupoPub> GrupoPubs { get; }
+        public IRepository<Pub> Pubs { get; }
+        public IRepository<Arranjo> Arranjos { get; }
+        public IRepository<NVMC> NVMCs { get; }
+        public IRepository<NVMCParte> NVMCPartes { get; }
+        public IRepository<Discurso> Discursos { get; }
+        public IRepository<Tema> Temas { get; }
+        public IRepository<OradorTema> OradorTemas { get; }
+        public IRepository<DiscursoNotificacao> DiscursoNotificacoes { get; }
+        public IRepository<ArranjoNotificacao> ArranjoNotificacoes { get; }
+        public IRepository<Evento> Eventos { get; }
+        public IRepository<EventoPapel> EventoPapeis { get; }
+        public IRepository<Relatorio> Relatorios { get; }
         public UnitOfWork(DatabaseContext context)
         {
             _context = context;
@@ -38,8 +48,23 @@ namespace Unit.Infra.Repositories
             Papeis = new Repository<Papel>(context);
             Pessoas = new Repository<Pessoa>(context);
             Enderecos = new Repository<Endereco>(context);
-            PessoaPapeis = new Repository<PessoaPapel>(context);
+            PubPapeis = new Repository<PubPapel>(context);
             PessoaEnderecos = new Repository<PessoaEndereco>(context);
+            Congs = new Repository<Cong>(context);
+            Grupos = new Repository<Grupo>(context);
+            GrupoPubs = new Repository<GrupoPub>(context);
+            Pubs = new Repository<Pub>(context);
+            Arranjos = new Repository<Arranjo>(context);
+            NVMCs = new Repository<NVMC>(context);
+            NVMCPartes = new Repository<NVMCParte>(context);
+            Discursos = new Repository<Discurso>(context);
+            Temas = new Repository<Tema>(context);
+            OradorTemas = new Repository<OradorTema>(context);
+            DiscursoNotificacoes = new Repository<DiscursoNotificacao>(context);
+            ArranjoNotificacoes = new Repository<ArranjoNotificacao>(context);
+            Eventos = new Repository<Evento>(context);
+            EventoPapeis = new Repository<EventoPapel>(context);
+            Relatorios = new Repository<Relatorio>(context);
         }
 
         public async Task<int> CommitAsync() => await _context.SaveChangesAsync();

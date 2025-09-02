@@ -4,6 +4,9 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>523c3e55-a3c1-48db-88ec-e8440c83647d</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileTag>webnando/greenhill-api</DockerfileTag>
 	</PropertyGroup>
 
 	<ItemGroup>

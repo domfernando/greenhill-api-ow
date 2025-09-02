@@ -15,5 +15,18 @@
     public class UpdatePapelRequest : CreatePapelRequest
     {
         public int Id { get; set; }
+        public string? Descricao { get; set; }
+        public string? Tipo { get; set; }
+    }
+
+    public class RemovePubPapelRequest
+    {
+        public int Id { get; set; }
+    }
+
+    public class AdicionaPubPapelRequest
+    {
+        public int PubId { get; set; }
+        public int PapelId { get; set; }
     }
 }

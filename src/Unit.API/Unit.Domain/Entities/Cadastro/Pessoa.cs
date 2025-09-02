@@ -22,7 +22,7 @@ namespace Unit.Domain.Entities.Cadastro
         public DateTime? Nascimento { get; set; }
         public string? Observacao { get; set; }
 
-        public virtual List<PessoaPapel> Papeis { get; set; }
+        //public virtual List<PessoaPapel> Papeis { get; set; }
         public virtual List<PessoaEndereco> Enderecos { get; set; }
 
         [NotMapped]
@@ -66,11 +66,11 @@ namespace Unit.Domain.Entities.Cadastro
         }
     }
 
-    public class PessoaPapel : EntidadeBase
+    public class PubPapel : EntidadeBase
     {
-        public int PessoaId { get; set; }
+        public int PubId { get; set; }
         public int PapelId { get; set; }
-        public virtual Pessoa Pessoa { get; set; }
+        public virtual Pub Pub { get; set; }
         public virtual Papel Papel { get; set; }
     }
 

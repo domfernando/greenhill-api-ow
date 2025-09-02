@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Unit.Domain.Entities.Config
+﻿namespace Unit.Domain.Entities.Config
 {
     public class Servico: EntidadeBase
     {

@@ -97,7 +97,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowNextJS", policy =>
     {
-        policy.WithOrigins("https://localhost:3000", "http://localhost:3000")
+        policy.WithOrigins("https://localhost:3040", "http://localhost:3040","https://greenhill.ajudador.com.br", "http://greenhill.ajudador.com.br")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

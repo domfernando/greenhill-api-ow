@@ -70,7 +70,7 @@ namespace Unit.Infra.Services
                 }
                 if (!string.IsNullOrEmpty(condicao.Nome))
                 {
-                    query = query.Where(x => x.Nome.ToLower().Contains(condicao.Nome.ToLower()));
+                    query = query.Where(x => x.Nome.ToLower().Contains(condicao.Nome.ToLower()) || x.Descricao.ToLower().Contains(condicao.Nome));
                 }
 
                 var resultado = query.ToList();
@@ -102,9 +102,11 @@ namespace Unit.Infra.Services
 
             try
             {
-                var one = await _unitOfWork.Papeis.AsQueryable()
-                            .Where(x => x.ID == id)
-                            .FirstOrDefaultAsync();
+                var one = await _unitOfWork.Papeis
+                                            .AsQueryable()
+                                            .Include(x => x.Pubs).ThenInclude(x => x.Pub)
+                                            .Where(x => x.ID == id)
+                                            .FirstOrDefaultAsync();
 
                 retorno.Success = true;
                 retorno.Status = System.Net.HttpStatusCode.OK;
@@ -139,6 +141,7 @@ namespace Unit.Infra.Services
                     var registro = _mapper.Map<Papel>(existente);
                     registro.Alterado = DateTime.Now;
                     registro.Nome = entidade.Nome;
+                    registro.Descricao = entidade.Descricao;
                     registro.Ativo = entidade.Ativo;
 
                     _unitOfWork.Papeis.Update(registro);

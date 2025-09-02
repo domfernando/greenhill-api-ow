@@ -63,30 +63,30 @@ namespace Unit.Infra.Services
 
             try
             {
-                var existe = _unitOfWork.PessoaPapeis.AsQueryable()
-                                       .Where(x => x.PessoaId == pessoaId && x.PapelId == papelId)
-                                       .FirstOrDefault();
+                ////var existe = _unitOfWork.PessoaPapeis.AsQueryable()
+                ////                       .Where(x => x.PessoaId == pessoaId && x.PapelId == papelId)
+                ////                       .FirstOrDefault();
 
-                if (existe != null)
-                {
-                    retorno.Success = false;
-                    retorno.Messages.Add("Papel já vinculado a pessoa.");
-                }
-                else
-                {
-                    var novoPapel = new PessoaPapel
-                    {
-                        PessoaId = pessoaId,
-                        PapelId = papelId,
-                        Criado = System.DateTime.Now
-                    };
+                ////if (existe != null)
+                ////{
+                ////    retorno.Success = false;
+                ////    retorno.Messages.Add("Papel já vinculado a pessoa.");
+                ////}
+                ////else
+                ////{
+                ////    var novoPapel = new PessoaPapel
+                ////    {
+                ////        PessoaId = pessoaId,
+                ////        PapelId = papelId,
+                ////        Criado = System.DateTime.Now
+                ////    };
 
-                    await _unitOfWork.PessoaPapeis.AddAsync(novoPapel);
-                    await _unitOfWork.CommitAsync();
+                ////    await _unitOfWork.PessoaPapeis.AddAsync(novoPapel);
+                ////    await _unitOfWork.CommitAsync();
 
-                    retorno.Success = true;
-                    retorno.Messages.Add("Papel vinculado a pessoa com sucesso.");
-                }
+                ////    retorno.Success = true;
+                ////    retorno.Messages.Add("Papel vinculado a pessoa com sucesso.");
+                //}
             }
             catch (Exception ex)
             {
@@ -144,37 +144,37 @@ namespace Unit.Infra.Services
 
             try
             {
-                // Busca todos os papeis ativos
-                var papeis = await _unitOfWork.Papeis.AsQueryable().ToListAsync();
+                //// Busca todos os papeis ativos
+                //var papeis = await _unitOfWork.Papeis.AsQueryable().ToListAsync();
 
-                // Busca todas as pessoas com seus papeis
-                var pessoas = await _unitOfWork.Pessoas.AsQueryable()
-                                    .Include(x => x.Papeis)
-                                        .ThenInclude(x => x.Papel)
-                                    .ToListAsync();
+                //// Busca todas as pessoas com seus papeis
+                //var pessoas = await _unitOfWork.Pessoas.AsQueryable()
+                //                    .Include(x => x.Papeis)
+                //                        .ThenInclude(x => x.Papel)
+                //                    .ToListAsync();
 
-                // Agrupa por Papel e conta quantas pessoas possuem cada papel
-                var grouped = papeis
-                    .Select(papel => new GraphicResponse
-                    {
-                        Status = papel.Nome,
-                        Quantidade = pessoas.Count(p => p.Papeis.Any(pp => pp.PapelId == papel.ID))
-                    })
-                    .OrderBy(x => x.Status)
-                    .ToList();
+                //// Agrupa por Papel e conta quantas pessoas possuem cada papel
+                //var grouped = papeis
+                //    .Select(papel => new GraphicResponse
+                //    {
+                //        Status = papel.Nome,
+                //        Quantidade = pessoas.Count(p => p.Papeis.Any(pp => pp.PapelId == papel.ID))
+                //    })
+                //    .OrderBy(x => x.Status)
+                //    .ToList();
 
-                // Adiciona o total geral
-                var total = new GraphicResponse
-                {
-                    Status = "Total",
-                    Quantidade = grouped.Sum(x => x.Quantidade)
-                };
-                grouped.Add(total);
+                //// Adiciona o total geral
+                //var total = new GraphicResponse
+                //{
+                //    Status = "Total",
+                //    Quantidade = grouped.Sum(x => x.Quantidade)
+                //};
+                //grouped.Add(total);
 
-                retorno.Success = true;
-                retorno.Status = System.Net.HttpStatusCode.OK;
-                retorno.Messages.Add("Dados encontrados com sucesso.");
-                retorno.Data = grouped;
+                //retorno.Success = true;
+                //retorno.Status = System.Net.HttpStatusCode.OK;
+                //retorno.Messages.Add("Dados encontrados com sucesso.");
+                //retorno.Data = grouped;
             }
             catch (Exception ex)
             {
@@ -192,16 +192,16 @@ namespace Unit.Infra.Services
 
             try
             {
-                var one = await _unitOfWork.Pessoas.AsQueryable()
-                                .Include(x => x.Papeis).ThenInclude(x => x.Papel)
-                                .Include(x => x.Enderecos).ThenInclude(x => x.Endereco)
-                                .Where(x => x.ID == id)
-                                .FirstOrDefaultAsync();
+                //var one = await _unitOfWork.Pessoas.AsQueryable()B
+                //                .Include(x => x.Papeis).ThenInclude(x => x.Papel)
+                //                .Include(x => x.Enderecos).ThenInclude(x => x.Endereco)
+                //                .Where(x => x.ID == id)
+                //                .FirstOrDefaultAsync();
 
-                retorno.Success = true;
-                retorno.Status = System.Net.HttpStatusCode.OK;
-                retorno.Messages.Add("Registro encontrado com sucesso.");
-                retorno.Data = one != null ? _mapper.Map<PessoaResponse>(one) : new PessoaResponse();
+                //retorno.Success = true;
+                //retorno.Status = System.Net.HttpStatusCode.OK;
+                //retorno.Messages.Add("Registro encontrado com sucesso.");
+                //retorno.Data = one != null ? _mapper.Map<PessoaResponse>(one) : new PessoaResponse();
             }
             catch (Exception ex)
             {
@@ -219,23 +219,23 @@ namespace Unit.Infra.Services
 
             try
             {
-                var existe = _unitOfWork.PessoaPapeis.AsQueryable()
-                                       .Where(x => x.ID == id)
-                                       .FirstOrDefault();
+                //var existe = _unitOfWork.PessoaPapeis.AsQueryable()
+                //                       .Where(x => x.ID == id)
+                //                       .FirstOrDefault();
 
-                if (existe != null)
-                {
-                    _unitOfWork.PessoaPapeis.Delete(existe);
-                    await _unitOfWork.CommitAsync();
+                //if (existe != null)
+                //{
+                //    _unitOfWork.PessoaPapeis.Delete(existe);
+                //    await _unitOfWork.CommitAsync();
 
-                    retorno.Success = true;
-                    retorno.Messages.Add("Papel desvinculado a pessoa.");
-                }
-                else
-                {
-                    retorno.Success = false;
-                    retorno.Messages.Add("Papel não associado a a pessoa.");
-                }
+                //    retorno.Success = true;
+                //    retorno.Messages.Add("Papel desvinculado a pessoa.");
+                //}
+                //else
+                //{
+                //    retorno.Success = false;
+                //    retorno.Messages.Add("Papel não associado a a pessoa.");
+                //}
             }
             catch (Exception ex)
             {

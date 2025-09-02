@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Unit.Domain
 {
@@ -28,6 +30,37 @@ namespace Unit.Domain
         public override string ToString()
         {
             return string.Format("{0}#{1}", this.ID.ToString(), this.GetType());
+        }
+
+        [NotMapped]
+        public string? CriadoFormatado
+        {
+            get
+            {
+                if (Criado != null && Criado != DateTime.MinValue)
+                {
+                    return string.Format("{0:dd/MM/yyyy HH:mm:ss}", Criado);
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+        [NotMapped]
+        public string? AlteradoFormatado
+        {
+            get
+            {
+                if (Alterado != null && Alterado != DateTime.MinValue)
+                {
+                    return string.Format("{0:dd/MM/yyyy HH:mm:ss}", Alterado);
+                }
+                else
+                {
+                    return "";
+                }
+            }
         }
     }
 }

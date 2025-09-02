@@ -35,7 +35,16 @@ namespace Unit.Infra
             services.AddScoped<IPapelService, PapelService>();
             services.AddScoped<IPessoaService, PessoaService>();
             services.AddScoped<IEnderecoService, EnderecoService>();
+            services.AddScoped<ICongService, CongService>();
+            services.AddScoped<IPubService, PubService>();
+            services.AddScoped<IGrupoService, GrupoService>();
             services.AddScoped<IViaCepService, ViaCepService>();
+            services.AddScoped<IOradorTemaService, OradorTemaService>();
+            services.AddScoped<ITemaService, TemaService>();
+            services.AddScoped<IArranjoService, ArranjoService>();
+            services.AddScoped<IDiscursoService, DiscursoService>();
+            services.AddScoped<IEventoService, EventoService>();
+            services.AddScoped<IRelatorioService, RelatorioService>();
 
             AddAuthorization(services, configuration);
 

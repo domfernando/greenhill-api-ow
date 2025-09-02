@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using Unit.Application.Base;
 using Unit.Application.DTOs.Request;
 using Unit.Application.DTOs.Response;
+using Unit.Application.Services;
 using Unit.Application.Sevices;
 using Unit.Application.Util;
 using Unit.Domain.Entities.Acesso;
@@ -20,14 +21,16 @@ namespace Unit.Infra.Services
         private readonly IConfiguration _configuration;
         private readonly IMensagemService _mensagemService;
         private readonly IQueueService _queueService;
+        private readonly IPubService _pubService;
 
-        public UsuarioService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IMensagemService mensagemService, IQueueService queueService)
+        public UsuarioService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IMensagemService mensagemService, IQueueService queueService, IPubService pubService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _configuration = configuration;
             _mensagemService = mensagemService;
             _queueService = queueService;
+            _pubService = pubService;
         }
         public async Task<Reply> Add(CreateUsuarioRequest entidade)
         {
@@ -216,6 +219,20 @@ namespace Unit.Infra.Services
                                 ID = p.Perfil.ID,
                                 PerfilNome = p.Perfil.Nome
                             });
+                        }
+
+                        var _pub = await _pubService.GetByUsuarioId(_data.ID);
+
+                        if(_pub.Success && _pub.Data != null)
+                        {
+                            var _dadosPub = (PubResponse)_pub.Data;
+
+                            if (_dadosPub != null)
+                            {
+                                _userLogado.PubId = _dadosPub.ID;
+                                _userLogado.Papeis = _dadosPub.Papeis ?? new List<PubPapelResponse>();    
+                                _userLogado.Priv = _dadosPub.Privilegio;
+                            }
                         }
 
                         if (_data.Mfa == true)

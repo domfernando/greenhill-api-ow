@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Unit.Application.DTOs.Request;
+using Unit.Infra.Services;
 
 namespace Unit.API.Controllers
 {
@@ -10,11 +12,13 @@ namespace Unit.API.Controllers
     {
         readonly ILogger<EventoController> _logger;
         readonly Unit.Application.Sevices.IEventoService _Service;
+        private readonly IHubContext<MySocketService> _hubContext;
 
-        public EventoController(ILogger<EventoController> logger, Unit.Application.Sevices.IEventoService service)
+        public EventoController(ILogger<EventoController> logger, Unit.Application.Sevices.IEventoService service, IHubContext<MySocketService> hubContext)
         {
             _logger = logger;
             _Service = service;
+            _hubContext = hubContext;
         }
 
         #region CRUD
@@ -41,7 +45,23 @@ namespace Unit.API.Controllers
             {
                 return BadRequest(dados);
             }
+            var usuario = User.Identity?.Name; // Ou use outro claim se necessário
+            //if (!string.IsNullOrEmpty(usuario))
+            //{
+            //    try
+            //    {
+            //        //await _hubContext.Clients.User(usuario).SendAsync("Notificacao", usuario, "O processo foi finalizado!");
+            //        //await _hubContext.Clients.All.SendAsync("Notificacao", usuario, "Para toddos");
+            //        await _hubContext.Clients.User(usuario).SendAsync("Notificar", usuario, "O processo foi finalizado!");
+            //        await _hubContext.Clients.All.SendAsync("Notificar", usuario, $"Eventos consultados");
+            //    }
+            //    catch (Exception ex)
+            //    {
 
+            //        throw;
+            //    }
+
+            //}
             return Ok(dados);
         }
 

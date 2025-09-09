@@ -91,10 +91,10 @@ namespace Unit.API.Controllers
         {
             var login = await _usuarioService.Login(command);
 
-            if (!login.Success)
-            {
-                return BadRequest(login);
-            }
+            //if (!login.Success)
+            //{
+            //    return BadRequest(login);
+            //}
 
             return Ok(login);
         }

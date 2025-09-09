@@ -17,6 +17,7 @@
         public string? NascimentoFormatado { get; set; }
         public DateTime? Batismo { get; set; }
         public string? BatismoFormatado { get; set; }
+        public DateTime? AuxiliarAte { get; set; }
         public string? Genero { get; set; }
         public string? Obs { get; set; }
         public string? EmergenciaNome { get; set; }
@@ -26,7 +27,10 @@
         public int? UsuarioId { get; set; }
         public PubUsuarioResponse Usuario { get; set; }
         public int? Idade { get; set; }
+        public string? IdadeFormatada { get; set; }
         public int? TempoBatismo { get; set; } = 0;
+        public string? TempoBatismoFormatado { get; set; }
+
         public string? Faixa { get; set; }
         public string? CriadoFormatado { get; set; }
         public string? AlteradoFormatado { get; set; }

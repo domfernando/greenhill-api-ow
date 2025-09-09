@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Unit.Application.Base;
 using Unit.Application.DTOs.Request;
@@ -6,6 +7,7 @@ using Unit.Application.DTOs.Response;
 using Unit.Application.Enums;
 using Unit.Application.Sevices;
 using Unit.Application.Util;
+using Unit.Domain.Entities.Acesso;
 using Unit.Domain.Entities.Cadastro;
 
 namespace Unit.Infra.Services
@@ -14,11 +16,13 @@ namespace Unit.Infra.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHubContext<MySocketService> _hubContext;
 
-        public RelatorioService(IUnitOfWork unitOfWork, IMapper mapper)
+        public RelatorioService(IUnitOfWork unitOfWork, IMapper mapper, IHubContext<MySocketService> hubContext)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _hubContext = hubContext;
         }
         public async Task<Reply> Add(CreateRelatorioRequest entidade)
         {
@@ -70,6 +74,7 @@ namespace Unit.Infra.Services
         {
             Reply retorno = new Reply();
             string[] ignorar = new string[] { "Falecido", "Mudou", "Inativo", "Removido" };
+            var _data = DateTime.Parse(entidade.Mes);
 
             try
             {
@@ -79,19 +84,27 @@ namespace Unit.Infra.Services
                                                     .Select(p => new
                                                     {
                                                         PubId = p.ID,
-                                                        Situacao = p.Situacao
+                                                        Situacao = p.Situacao,
+                                                        AuxiliarAte = p.AuxiliarAte,
+                                                        Auxiliar = p.AuxiliarAte != null ? (p.AuxiliarAte > _data) : false
                                                     })
                                                     .ToListAsync();
                 if (publicadores != null)
                 {
                     foreach (var pub in publicadores)
                     {
+                        if (pub.Auxiliar)
+                        {
+
+                        }
+
+
                         Relatorio relat = new Relatorio()
                         {
-                            Data = entidade.Mes,
+                            Data = _data,
                             PubId = pub.PubId,
                             Atividade = false,
-                            Auxiliar = false,
+                            Auxiliar = pub.Auxiliar,
                             Regular = pub.Situacao == "Regular",
                             Horas = 0,
                             Estudos = 0,
@@ -101,7 +114,7 @@ namespace Unit.Infra.Services
 
                         var existe = await _unitOfWork.Relatorios
                                                      .AsQueryable()
-                                                     .Where(x => x.Data == entidade.Mes && x.PubId == pub.PubId)
+                                                     .Where(x => x.Data == _data && x.PubId == pub.PubId)
                                                      .FirstOrDefaultAsync();
                         if (existe == null)
                         {
@@ -127,6 +140,11 @@ namespace Unit.Infra.Services
                 retorno.Errors.Add(ex.Message);
             }
 
+            if (!string.IsNullOrEmpty(entidade.Usuario))
+            {
+                await _hubContext.Clients.All.SendAsync("Push", entidade.Usuario, $"A criação dos relatórios foi realizada com sucesso.");
+            }
+
             return retorno;
         }
 
@@ -134,6 +152,7 @@ namespace Unit.Infra.Services
         {
             Reply retorno = new Reply();
             string[] ignorar = new string[] { "Falecido", "Mudou", "Inativo", "Removido" };
+            var _data = DateTime.Parse(entidade.Data);
 
             try
             {
@@ -142,7 +161,7 @@ namespace Unit.Infra.Services
                                                .Include(x => x.Pub)
                                                .Where(x => x.GrupoID == entidade.GrupoId)
                                                .Where(x => !ignorar.Contains(x.Pub.Situacao))
-                                               .Select(x => new { x.Pub.ID, x.Pub.Situacao  })
+                                               .Select(x => new { x.Pub.ID, x.Pub.Situacao, x.Pub.AuxiliarAte, Auxiliar = x.Pub.AuxiliarAte != null ? (x.Pub.AuxiliarAte > _data) : false })
                                                .ToListAsync();
 
                 if (publicadores != null)
@@ -151,10 +170,10 @@ namespace Unit.Infra.Services
                     {
                         Relatorio relat = new Relatorio()
                         {
-                            Data = entidade.Data,
+                            Data = _data,
                             PubId = pub.ID,
                             Atividade = false,
-                            Auxiliar = false,
+                            Auxiliar = pub.Auxiliar,
                             Regular = pub.Situacao == "Regular",
                             Horas = 0,
                             Estudos = 0,
@@ -164,7 +183,7 @@ namespace Unit.Infra.Services
 
                         var existe = await _unitOfWork.Relatorios
                                                         .AsQueryable()
-                                                        .Where(x => x.Data == entidade.Data && x.PubId == pub.ID)
+                                                        .Where(x => x.Data == _data && x.PubId == pub.ID)
                                                         .FirstOrDefaultAsync();
                         if (existe == null)
                         {
@@ -256,15 +275,39 @@ namespace Unit.Infra.Services
                 }
                 else
                 {
-                    resultado = resultado.OrderBy(p =>
-                                                    p.Pub.Grupos.FirstOrDefault()?.Papel == "SG" ? 0 :
-                                                    p.Pub.Grupos.FirstOrDefault()?.Papel == "DG" ? 1 :
-                                                    p.Pub.Grupos.FirstOrDefault()?.Papel == "AJ" ? 2 : 3)
-                                                .ThenBy(m => m.Pub.Nome)
-                                                .ToList();
-                    var data = _mapper.Map<List<RelatorioResponse>>(resultado);
-                    retorno.Messages.Add("Relatório(s) encontrado(s) com sucesso.");
-                    retorno.Data = data;
+                    if (condicao.Agrupar == true)
+                    {
+                        var agrupado = resultado
+                            .GroupBy(relats => relats.Data)
+                            .Select(g => new
+                            {
+                                Mes = string.Format("{0: MMMM/yyyy}", g.Key),
+                                Relatorios = _mapper.Map<List<RelatorioResponse>>(g.OrderBy(p =>
+                                                                                            p.Pub.Grupos.FirstOrDefault()?.Papel == "SG" ? 0 :
+                                                                                            p.Pub.Grupos.FirstOrDefault()?.Papel == "DG" ? 1 :
+                                                                                            p.Pub.Grupos.FirstOrDefault()?.Papel == "AJ" ? 2 : 3)
+                                                                                            .ThenBy(m => m.Pub.Nome).ToList())
+                            })
+                            .OrderBy(g => g.Mes)
+                            .ToList();
+
+                        retorno.Messages.Add("Relatório(s) agrupado(s) com sucesso.");
+                        retorno.Data = agrupado;
+                        retorno.Success = true;
+                        return retorno;
+                    }
+                    else
+                    {
+                        resultado = resultado.OrderBy(p =>
+                                                      p.Pub.Grupos.FirstOrDefault()?.Papel == "SG" ? 0 :
+                                                      p.Pub.Grupos.FirstOrDefault()?.Papel == "DG" ? 1 :
+                                                      p.Pub.Grupos.FirstOrDefault()?.Papel == "AJ" ? 2 : 3)
+                                                      .ThenBy(m => m.Pub.Nome)
+                                              .ToList();
+
+                        retorno.Messages.Add("Relatório(s) encontrado(s) com sucesso.");
+                        retorno.Data = _mapper.Map<List<RelatorioResponse>>(resultado);
+                    }
                 }
             }
             catch (Exception ex)

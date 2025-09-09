@@ -17,6 +17,7 @@ namespace Unit.Domain.Entities.Cadastro
         public string? Celular { get; set; }
         public DateTime? Nascimento { get; set; }
         public DateTime? Batismo { get; set; }
+        public DateTime? AuxiliarAte { get; set; }
         public string? Genero { get; set; }
         public string? Obs { get; set; }
         public string? EmergenciaNome { get; set; }
@@ -84,6 +85,32 @@ namespace Unit.Domain.Entities.Cadastro
         }
 
         [NotMapped]
+        public string? IdadeFormatada
+        {
+            get
+            {
+                if (Nascimento != null)
+                {
+                    var hoje = DateTime.Now;
+                    var anos = hoje.Year - Nascimento.Value.Year;
+                    var meses = hoje.Month - Nascimento.Value.Month;
+
+                    if(meses < 0)
+                    {
+                        anos--;
+                        meses += 12;
+                    }
+                    
+                    return $"{anos} anos e {meses} meses";
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+
+        [NotMapped]
         public int? TempoBatismo
         {
             get
@@ -96,6 +123,32 @@ namespace Unit.Domain.Entities.Cadastro
                 else
                 {
                     return 0;
+                }
+            }
+        }
+
+        [NotMapped]
+        public string? TempoBatismoFormatado
+        {
+            get
+            {
+                if (Batismo != null)
+                {
+                    var hoje = DateTime.Now;
+                    var anos = hoje.Year -  Batismo.Value.Year;
+                    var meses = hoje.Month - Batismo.Value.Month;
+
+                    if (meses < 0)
+                    {
+                        anos--;
+                        meses += 12;
+                    }
+
+                    return $"{anos} anos e {meses} meses";
+                }
+                else
+                {
+                    return "";
                 }
             }
         }

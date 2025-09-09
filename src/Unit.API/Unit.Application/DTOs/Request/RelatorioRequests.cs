@@ -6,6 +6,7 @@
         public DateTime? Mes { get; set; }
         public int? PubId { get; set; }
         public int? GrupoId { get; set; }
+        public bool? Agrupar { get; set; } = false;
     }
 
     public class CreateRelatorioRequest
@@ -16,12 +17,13 @@
 
     public class CreateRelatorioBatchRequest
     {
-        public DateTime Mes { get; set; }
+        public string? Mes { get; set; }
+        public string? Usuario { get; set; }
     }
 
     public class CreateRelatorioByGrupoRequest
     {
-        public DateTime Data { get; set; }
+        public string? Data { get; set; }
         public int GrupoId { get; set; }
     }
 

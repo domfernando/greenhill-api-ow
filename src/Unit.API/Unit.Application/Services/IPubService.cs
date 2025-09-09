@@ -14,6 +14,7 @@ namespace Unit.Application.Services
         Task<Reply> GetOradores(OradorQueryRequest condicao);
         Task<Reply> AddPapel(int pubId, int papelId);
         Task<Reply> RemPapel(int id);
+        Task<Reply> RemoverPapel(int pubId, int papelId);
         Task<Reply> AddGrupo(int pubId, int grupoId, string papel);
         Task<Reply> RemGrupo(int id);
         Task<Reply> GetByUsuarioId(int id);

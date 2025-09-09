@@ -14,7 +14,6 @@
         public string? Observacao { get; set; }
         public string? Whatsapp { get; set; }
         public int? Idade { get; set; }
-
         public List<PessoaPapelResponse> Papeis { get; set; } = new List<PessoaPapelResponse>();
         public List<PessoaEnderecoResponse> Enderecos { get; set; } = new List<PessoaEnderecoResponse>();
     }

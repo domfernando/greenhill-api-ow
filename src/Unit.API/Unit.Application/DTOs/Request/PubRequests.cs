@@ -6,10 +6,10 @@ namespace Unit.Application.DTOs.Request
     {
         public int? Id { get; set; }
         public string? Nome { get; set; }
-        public Privilegio? Privilegio { get; set; }
-        public Situacao? Situacao { get; set; }
-        public Genero? Genero { get; set; }
-        public Faixa? Faixa { get; set; }
+        public string? Privilegio { get; set; }
+        public string? Situacao { get; set; }
+        public string? Genero { get; set; }
+        public string? Faixa { get; set; }
         public string? Varao { get; set; }
         public string? Dianteira { get; set; }
         public string? Escola { get; set; }
@@ -35,6 +35,7 @@ namespace Unit.Application.DTOs.Request
         public string? Celular { get; set; }
         public string? Nascimento { get; set; }
         public string? Batismo { get; set; }
+        public string? AuxiliarAte { get; set; }
         public string? Genero { get; set; }
         public string? Obs { get; set; }
         public string? EmergenciaNome { get; set; }
@@ -45,5 +46,6 @@ namespace Unit.Application.DTOs.Request
         public bool? Notificar { get; set; } = false;
         public int? UsuarioId { get; set; } = 0;
         public string? PapeisSelecionados { get; set; }
+        public string? PapeisRemovidos { get; set; }
     }
 }

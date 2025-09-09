@@ -167,17 +167,17 @@ namespace Unit.Infra.Services
                 {
                     query = query.Where(x => x.Nome.ToLower().Contains(condicao.Nome.ToLower()));
                 }
-                if (condicao.Genero.HasValue)
+                if (!string.IsNullOrEmpty(condicao.Genero))
                 {
-                    query = query.Where(x => x.Genero.ToLower() != null && x.Genero.ToLower().Contains(condicao.Genero.Value.ToString().ToLower()));
+                    query = query.Where(x => x.Genero.ToLower() != null && x.Genero.ToLower().Contains(condicao.Genero.ToLower()));
                 }
-                if (condicao.Privilegio.HasValue)
+                if (!string.IsNullOrEmpty(condicao.Privilegio))
                 {
-                    query = query.Where(x => x.Privilegio != null && x.Privilegio.ToLower().Equals(condicao.Privilegio.Value.ToString().ToLower().Replace("_", " ")));
+                    query = query.Where(x => x.Privilegio != null && x.Privilegio.ToLower().Equals(condicao.Privilegio.ToLower().Replace("_", " ")));
                 }
-                if (condicao.Situacao.HasValue)
+                if (!string.IsNullOrEmpty(condicao.Situacao))
                 {
-                    query = query.Where(x => x.Situacao != null && x.Situacao.ToLower().Contains(condicao.Situacao.Value.ToString().ToLower().Replace("_", " ")));
+                    query = query.Where(x => x.Situacao != null && x.Situacao.ToLower().Contains(condicao.Situacao.ToLower().Replace("_", " ")));
                 }
                 else
                 {
@@ -203,9 +203,9 @@ namespace Unit.Infra.Services
                 {
                     resultado = resultado.Where(x => x.Dianteira == Convert.ToBoolean(condicao.Dianteira)).ToList();
                 }
-                if (condicao.Faixa.HasValue)
+                if (!string.IsNullOrEmpty(condicao.Faixa))
                 {
-                    resultado = resultado.Where(x => x.Faixa != null && x.Faixa.ToLower().Equals(condicao.Faixa.Value.ToString().ToLower())).ToList();
+                    resultado = resultado.Where(x => x.Faixa != null && x.Faixa.ToLower().Equals(condicao.Faixa.ToLower())).ToList();
                 }
 
                 retorno.Success = true;
@@ -449,6 +449,40 @@ namespace Unit.Infra.Services
             return Task.FromResult(retorno);
         }
 
+        public async Task<Reply> RemoverPapel(int pubId, int papelId)
+        {
+            Reply retorno = new Reply();
+
+            try
+            {
+                var existe = _unitOfWork.PubPapeis.AsQueryable()
+                                       .Where(x => x.PubId == pubId && x.PapelId == papelId)
+                                       .FirstOrDefault();
+
+                if (existe != null)
+                {
+                    _unitOfWork.PubPapeis.Delete(existe);
+                    await _unitOfWork.CommitAsync();
+
+                    retorno.Success = true;
+                    retorno.Messages.Add("Papel desvinculado do publicador.");
+                }
+                else
+                {
+                    retorno.Success = false;
+                    retorno.Messages.Add("Papel não associado ao publicador.");
+                }
+            }
+            catch (Exception ex)
+            {
+                retorno.Success = false;
+                retorno.Messages.Add("Não foi possível pesquisar o registro.");
+                retorno.Errors.Add(ex.Message);
+            }
+
+            return retorno;
+        }
+
         public async Task<Reply> UpdateAsync(PubUpdateModel dados)
         {
             Reply retorno = new Reply();
@@ -463,6 +497,7 @@ namespace Unit.Infra.Services
                     registro.NomeCompleto = dados.NomeCompleto;
                     registro.Nascimento = !string.IsNullOrEmpty(dados.Nascimento) ? DateTime.Parse(dados.Nascimento) : null;
                     registro.Batismo = !string.IsNullOrEmpty(dados.Batismo) ? DateTime.Parse(dados.Batismo) : null;
+                    registro.AuxiliarAte= !string.IsNullOrEmpty(dados.AuxiliarAte) ? DateTime.Parse(dados.AuxiliarAte) : null;
                     registro.Situacao = dados.Situacao.Replace("_", " ");
                     registro.Privilegio = dados.Privilegio.Replace("_", " ");
                     registro.Orador = dados.Orador;
@@ -487,17 +522,13 @@ namespace Unit.Infra.Services
                         {
                             var addPapel = await this.AddPapel(dados.ID, Convert.ToInt32(item));
                         }
+                    }
 
-                        var papeisPub = await _unitOfWork.PubPapeis.AsQueryable()
-                                                        .AsNoTracking()
-                                                        .Where(x => x.PubId == dados.ID)
-                                                        .ToListAsync();
-                        foreach (var item in papeisPub)
+                    if (!string.IsNullOrEmpty(dados.PapeisRemovidos))
+                    {
+                        foreach (var excluir in dados.PapeisRemovidos.Split(","))
                         {
-                            if (!dados.PapeisSelecionados.Split(",").Select(int.Parse).ToArray().Contains(item.PapelId))
-                            {
-                                var remPapel = await this.RemPapel(item.ID);
-                            }
+                            var remPapel = await this.RemoverPapel(dados.ID, Convert.ToInt32(excluir));
                         }
                     }
 

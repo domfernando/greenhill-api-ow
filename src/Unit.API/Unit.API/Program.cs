@@ -1,4 +1,6 @@
 using FluentValidation;
+using Hangfire;
+using Hangfire.MySql;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.DataProtection;
@@ -12,6 +14,10 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Unit.Application;
 using Unit.Infra;
+using Unit.Infra.Tools;
+using Unit.API.Util;
+using Microsoft.AspNetCore.SignalR;
+using Unit.Infra.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,31 +73,10 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfra(builder.Configuration);
 
+builder.Services.AddHangfireConfiguration(builder.Configuration);
+
 // Register FluentValidation (Nova forma - sem pacote depreciado)
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
-// Configurar mensagens FluentValidation em português
-//ValidatorOptions.Global.LanguageManager.Culture = culture;
-
-//// Model validation error handling
-//builder.Services.Configure<ApiBehaviorOptions>(options =>
-//{
-//    options.InvalidModelStateResponseFactory = context =>
-//    {
-//        var errors = context.ModelState
-//            .Where(x => x.Value.Errors.Count > 0)
-//            .ToDictionary(
-//                kvp => kvp.Key,
-//                kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-//            );
-//        return new BadRequestObjectResult(new
-//        {
-//            Success = false,
-//            Message = "Dados inválidos",
-//            Errors = errors
-//        });
-//    };
-//});
 
 builder.Services.AddCors(options =>
 {
@@ -102,6 +87,13 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()
               .AllowCredentials();
     });
+});
+
+builder.Services.AddSignalR(options =>
+{
+    options.ClientTimeoutInterval = TimeSpan.FromSeconds(30); // tempo máximo sem ping antes de considerar cliente inativo
+    options.KeepAliveInterval = TimeSpan.FromSeconds(15);    // frequência que o servidor manda ping
+    options.HandshakeTimeout = TimeSpan.FromSeconds(15);     // tempo máximo para handshake inicial
 });
 
 var app = builder.Build();
@@ -123,9 +115,12 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     SupportedUICultures = new[] { culture }
 });
 
+app.UsehangfireConfiguration();
+
 app.UseMiddleware<Unit.API.Middleware.ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<MySocketService>("/ws").RequireCors("AllowNextJS");
 
 app.Run();

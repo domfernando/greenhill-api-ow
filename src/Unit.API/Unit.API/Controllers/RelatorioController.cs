@@ -1,7 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore.Internal;
 using Unit.Application.DTOs.Request;
 using Unit.Application.Services;
+using Unit.Application.Sevices;
+using Unit.Application.Util;
+using Unit.Domain.Entities.Acesso;
+using Unit.Infra.Services;
 
 namespace Unit.API.Controllers
 {
@@ -12,12 +19,16 @@ namespace Unit.API.Controllers
         readonly ILogger<RelatorioController> _logger;
         readonly Unit.Application.Sevices.IRelatorioService _Service;
         readonly IPubService _pubService;
+        private readonly IHubContext<MySocketService> _hubContext;
+        private readonly IWebHostEnvironment _env;
 
-        public RelatorioController(ILogger<RelatorioController> logger, Unit.Application.Sevices.IRelatorioService service, IPubService pubService)
+        public RelatorioController(ILogger<RelatorioController> logger, Unit.Application.Sevices.IRelatorioService service, IPubService pubService, IHubContext<MySocketService> hubContext, IWebHostEnvironment env)
         {
             _logger = logger;
             _Service = service;
             _pubService = pubService;
+            _hubContext = hubContext;
+            _env = env;
         }
 
         #region CRUD
@@ -94,13 +105,51 @@ namespace Unit.API.Controllers
         [Authorize]
         public async Task<IActionResult> CreateBatch([FromBody] CreateRelatorioBatchRequest command)
         {
-            var dados = await _Service.AddBatch(command);
-            if (!dados.Success)
+            Reply retorno = new Reply();
+            try
             {
-                return BadRequest(dados);
+                command.Usuario = User?.Identity.Name;
+
+                if (!string.IsNullOrEmpty(command.Usuario))
+                {
+                    await _hubContext.Clients.All.SendAsync("Push", command.Usuario, $"A criação dos relatórios foi solicitada. Aguarde o final do processo");
+                }
+
+                if(_env.IsDevelopment() || _env.IsEnvironment("Test"))
+                {
+                    retorno = await _Service.AddBatch(command);
+                    retorno.Messages.Add("Processo concluído.");
+                }
+                else
+                {
+                    string jobId;
+                    jobId = BackgroundJob.Schedule<IRelatorioService>(svc => svc.AddBatch(command), TimeSpan.FromMinutes(1));
+
+                    retorno.Success = true;
+                    retorno.Messages.Add("Processo em segundo plano iniciado. Job ID: " + jobId);
+                }
+            }
+            catch (Exception ex)
+            {
+                retorno.Success = false;
+                retorno.Messages.Add("Erro ao iniciar o processo em segundo plano.");
+                retorno.Errors.Add(ex.Message);
             }
 
-            return Ok(dados);
+            return Ok(retorno);
+
+            //command.Usuario = User?.Identity?.Name;
+
+
+
+
+            //var dados = await _Service.AddBatch(command);
+            //if (!dados.Success)
+            //{
+            //    return BadRequest(dados);
+            //}
+
+            //return Ok(dados);
         }
 
         [HttpPost]

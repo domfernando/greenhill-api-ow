@@ -147,6 +147,99 @@ namespace Unit.Infra.Services
             return retorno;
         }
 
+        public async Task<Reply> GetList(PubQueryModel condicao)
+        {
+            Reply retorno = new Reply();
+
+            try
+            {
+                var query = _unitOfWork.Pubs
+                                        .AsQueryable()
+                                        .Include(x => x.Papeis).ThenInclude(p => p.Papel)
+                                        .Include(x => x.Grupos).ThenInclude(g => g.Grupo)
+                                        .AsQueryable();
+
+                if (condicao.Id.HasValue && condicao.Id.Value > 0)
+                {
+                    query = query.Where(x => x.ID == condicao.Id.Value);
+                }
+                if (!string.IsNullOrEmpty(condicao.Nome))
+                {
+                    query = query.Where(x => x.Nome.ToLower().Contains(condicao.Nome.ToLower()));
+                }
+                if (!string.IsNullOrEmpty(condicao.Genero))
+                {
+                    query = query.Where(x => x.Genero.ToLower() != null && x.Genero.ToLower().Contains(condicao.Genero.ToLower()));
+                }
+                if (!string.IsNullOrEmpty(condicao.Privilegio))
+                {
+                    query = query.Where(x => x.Privilegio != null && x.Privilegio.ToLower().Equals(condicao.Privilegio.ToLower().Replace("_", " ")));
+                }
+                if (!string.IsNullOrEmpty(condicao.Situacao))
+                {
+                    query = query.Where(x => x.Situacao != null && x.Situacao.ToLower().Contains(condicao.Situacao.ToLower().Replace("_", " ")));
+                }
+                else
+                {
+                    string[] ignorar = { "removido", "falecido", "mudou" };
+                    query = query.Where(x => x.Situacao != null && !ignorar.Contains(x.Situacao.ToLower()));
+                }
+                if (condicao.Orador.HasValue)
+                {
+                    query = query.Where(x => x.Orador == condicao.Orador.Value);
+                }
+                if (!string.IsNullOrEmpty(condicao.Escola))
+                {
+                    query = query.Where(x => x.Escola == Convert.ToBoolean(condicao.Escola));
+                }
+
+                var resultado = await query.ToListAsync();
+
+                if (!string.IsNullOrEmpty(condicao.Varao))
+                {
+                    resultado = resultado.Where(x => x.Varao == Convert.ToBoolean(condicao.Varao)).ToList();
+                }
+                if (!string.IsNullOrEmpty(condicao.Dianteira))
+                {
+                    resultado = resultado.Where(x => x.Dianteira == Convert.ToBoolean(condicao.Dianteira)).ToList();
+                }
+                if (!string.IsNullOrEmpty(condicao.Faixa))
+                {
+                    resultado = resultado.Where(x => x.Faixa != null && x.Faixa.ToLower().Equals(condicao.Faixa.ToLower())).ToList();
+                }
+
+                retorno.Success = true;
+
+                if (resultado == null || resultado.Count == 0)
+                {
+                    retorno.Messages.Add("Nenhum registro encontrado.");
+                    retorno.Data = null;
+                }
+                else
+                {
+                    var lista = resultado.Select(x => new
+                                                    { 
+                                                        ID= x.ID, 
+                                                        Nome = x.Nome 
+                                                    })
+                                         .OrderBy(x => x.Nome)
+                                         .ToList();
+
+                    retorno.Messages.Add("Registro(s) encontrado(s) com sucesso.");
+                    retorno.Data = lista;
+                }
+            }
+            catch (Exception ex)
+            {
+                retorno.Success = false;
+                retorno.Messages.Add("Não foi possível pesquisar o endereço.");
+                retorno.Errors.Add(ex.Message);
+            }
+
+            return retorno;
+        }
+
+
         public async Task<Reply> GetAll(PubQueryModel condicao)
         {
             Reply retorno = new Reply();
@@ -181,7 +274,7 @@ namespace Unit.Infra.Services
                 }
                 else
                 {
-                    string[] ignorar = { "inativo", "removido", "falecido", "mudou" };
+                    string[] ignorar = { "removido", "falecido", "mudou" };
                     query = query.Where(x => x.Situacao != null && !ignorar.Contains(x.Situacao.ToLower()));
                 }
                 if (condicao.Orador.HasValue)
@@ -551,7 +644,7 @@ namespace Unit.Infra.Services
 
             return retorno;
         }
-
+       
         #endregion
 
         #region Grupo

@@ -7,6 +7,7 @@ namespace Unit.Application.Services
     public interface IPubService
     {
         Task<Reply> GetOne(int id);
+        Task<Reply> GetList(PubQueryModel condicao);
         Task<Reply> GetAll(PubQueryModel condicao);
         Task<Reply> AddAsync(PubNewModel novo);
         Task<Reply> UpdateAsync(PubUpdateModel alterado);

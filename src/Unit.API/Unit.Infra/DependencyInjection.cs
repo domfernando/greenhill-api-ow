@@ -45,6 +45,8 @@ namespace Unit.Infra
             services.AddScoped<IDiscursoService, DiscursoService>();
             services.AddScoped<IEventoService, EventoService>();
             services.AddScoped<IRelatorioService, RelatorioService>();
+            services.AddScoped<INVMCService, NVMCService>();
+            services.AddScoped<INVMCParteService, NVMCParteService>();
 
             AddAuthorization(services, configuration);
 

@@ -1,4 +1,6 @@
-﻿namespace Unit.Domain.Entities.Cadastro
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Unit.Domain.Entities.Cadastro
 {
     public class NVMC: EntidadeBase
     {
@@ -9,6 +11,38 @@
         public string OracaoFinal { get; set; } = string.Empty;
         public string Conteudo { get; set; } = string.Empty;
         public virtual ICollection<NVMCParte> Partes { get; set; } = new List<NVMCParte>();
+        
+        [NotMapped]
+        public string MesFormatado
+        {
+            get
+            {
+                if (Mes != null && Mes != DateTime.MinValue)
+                {
+                    return string.Format("{0:MMMM/yyyy}", Mes);
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+
+        [NotMapped]
+        public string DataFormatada
+        {
+            get
+            {
+                if (Data != null && Data != DateTime.MinValue)
+                {
+                    return string.Format("{0:dd/MM/yyyy}", Data);
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
     }
 
     public class NVMCParte: EntidadeBase

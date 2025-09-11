@@ -73,14 +73,14 @@ namespace Unit.Infra.Services
         public async Task<Reply> AddBatch(CreateRelatorioBatchRequest entidade)
         {
             Reply retorno = new Reply();
-            string[] ignorar = new string[] { "Falecido", "Mudou", "Inativo", "Removido" };
+            string[] ignorar = new string[] { "falecido", "mudou", "removido" };
             var _data = DateTime.Parse(entidade.Mes);
 
             try
             {
                 var publicadores = await _unitOfWork.Pubs.AsQueryable()
                                                     .AsNoTracking()
-                                                    .Where(x => !ignorar.Contains(x.Situacao))
+                                                    .Where(x => !ignorar.Contains(x.Situacao.ToLower()))
                                                     .Select(p => new
                                                     {
                                                         PubId = p.ID,
@@ -151,18 +151,18 @@ namespace Unit.Infra.Services
         public async Task<Reply> AddByGrupo(CreateRelatorioByGrupoRequest entidade)
         {
             Reply retorno = new Reply();
-            string[] ignorar = new string[] { "Falecido", "Mudou", "Inativo", "Removido" };
+            string[] ignorar = new string[] { "falecido", "mudou", "removido" };
             var _data = DateTime.Parse(entidade.Data);
 
             try
             {
                 var publicadores = await _unitOfWork.GrupoPubs
-                                               .AsQueryable()
-                                               .Include(x => x.Pub)
-                                               .Where(x => x.GrupoID == entidade.GrupoId)
-                                               .Where(x => !ignorar.Contains(x.Pub.Situacao))
-                                               .Select(x => new { x.Pub.ID, x.Pub.Situacao, x.Pub.AuxiliarAte, Auxiliar = x.Pub.AuxiliarAte != null ? (x.Pub.AuxiliarAte > _data) : false })
-                                               .ToListAsync();
+                                                   .AsQueryable()
+                                                   .Include(x => x.Pub)
+                                                   .Where(x => x.GrupoID == entidade.GrupoId)
+                                                   .Where(x => !ignorar.Contains(x.Pub.Situacao.ToLower()))
+                                                   .Select(x => new { x.Pub.ID, x.Pub.Situacao, x.Pub.AuxiliarAte, Auxiliar = x.Pub.AuxiliarAte != null ? (x.Pub.AuxiliarAte > _data) : false })
+                                                   .ToListAsync();
 
                 if (publicadores != null)
                 {

@@ -48,28 +48,17 @@ namespace Unit.API.Controllers
         }
 
         [HttpGet("lista")]
+        [Authorize]
         public async Task<IActionResult> GetList([FromQuery] PubQueryModel condicao)
         {
-            var dados = await _Service.GetAll(condicao);
+            var dados = await _Service.GetList(condicao);
             if (!dados.Success)
             {
                 return BadRequest(dados);
             }
 
-            if (dados.Data != null)
-            {
-                var lista = (from x in (List<PubResponse>)dados.Data
-                             select new
-                             {
-                                 Value =x.ID,
-                                 Text=x.Nome
-                             }).ToList();
-                dados.Data = lista;
-            }
-
             return Ok(dados);
         }
-
 
         [HttpGet("usuario/{id}")]
         [Authorize]

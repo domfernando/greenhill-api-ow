@@ -27,7 +27,7 @@ namespace Unit.Domain.Entities.Cadastro
         public int? UsuarioId { get; set; }
         public virtual Usuario Usuario { get; set; }
         public virtual List<OradorTema> Temas { get; set; }
-        public virtual List<PubPapel> Papeis { get; set; }  
+        public virtual List<PubPapel> Papeis { get; set; }
         public virtual List<GrupoPub> Grupos { get; set; }
 
         [NotMapped]
@@ -95,12 +95,12 @@ namespace Unit.Domain.Entities.Cadastro
                     var anos = hoje.Year - Nascimento.Value.Year;
                     var meses = hoje.Month - Nascimento.Value.Month;
 
-                    if(meses < 0)
+                    if (meses < 0)
                     {
                         anos--;
                         meses += 12;
                     }
-                    
+
                     return $"{anos} anos e {meses} meses";
                 }
                 else
@@ -135,7 +135,7 @@ namespace Unit.Domain.Entities.Cadastro
                 if (Batismo != null)
                 {
                     var hoje = DateTime.Now;
-                    var anos = hoje.Year -  Batismo.Value.Year;
+                    var anos = hoje.Year - Batismo.Value.Year;
                     var meses = hoje.Month - Batismo.Value.Month;
 
                     if (meses < 0)
@@ -170,7 +170,7 @@ namespace Unit.Domain.Entities.Cadastro
             {
                 return Genero == "masculino" &&
                     (Privilegio == "Ancião" || Privilegio == "Servo Ministerial" ||
-                     Privilegio == "Publicador Exemplar");
+                     (Privilegio == "Exemplar" && Situacao == "Publicador"));
             }
         }
 

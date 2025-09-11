@@ -34,7 +34,7 @@ namespace Unit.API.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> GetAll([FromQuery] CongQueryModel condicao)
         {
             var dados = await _Service.GetAll(condicao);

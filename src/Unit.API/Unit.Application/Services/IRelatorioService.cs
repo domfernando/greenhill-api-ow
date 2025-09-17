@@ -7,6 +7,7 @@ namespace Unit.Application.Sevices
     {
         Task<Reply> GetOne(int id);
         Task<Reply> GetAll(QueryRelatorioRequest condicao);
+        Task<Reply> GetByPub(int pubId);
         Task<Reply> Add(CreateRelatorioRequest entidade);
         Task<Reply> AddBatch(CreateRelatorioBatchRequest entidade);
         Task<Reply> AddByGrupo(CreateRelatorioByGrupoRequest entidade);

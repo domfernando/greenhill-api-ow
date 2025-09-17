@@ -59,6 +59,19 @@ namespace Unit.API.Controllers
             return Ok(dados);
         }
 
+        [HttpGet("pub/{id}")]
+        [Authorize]
+        public async Task<IActionResult> GetByPub([FromRoute] int id)
+        {
+            var dados = await _Service.GetByPub(id);
+            if (!dados.Success)
+            {
+                return BadRequest(dados);
+            }
+
+            return Ok(dados);
+        }
+
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Create([FromBody] CreateRelatorioRequest command)

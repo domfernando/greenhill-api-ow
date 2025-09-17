@@ -320,6 +320,32 @@ namespace Unit.Infra.Services
             return retorno;
         }
 
+        public async Task<Reply> GetByPub(int pubId)
+        {
+            Reply retorno = new Reply();
+
+            try
+            {
+                var query = await _unitOfWork.Relatorios
+                                           .AsQueryable()
+                                           .Where(x => x.PubId == pubId)
+                                           .OrderBy(x => x.Data)
+                                           .ToListAsync();
+           
+                retorno.Success = true; 
+                retorno.Messages.Add("Relatório(s) encontrado(s) com sucesso.");
+                retorno.Data = query;
+            }
+            catch (Exception ex)
+            {
+                retorno.Success = false;
+                retorno.Messages.Add("Não foi possível pesquisar os relatórios deste publicador.");
+                retorno.Errors.Add(ex.Message);
+            }
+
+            return retorno;
+        }
+
         public async Task<Reply> GetOne(int id)
         {
             Reply retorno = new Reply();

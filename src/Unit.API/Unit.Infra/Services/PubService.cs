@@ -207,6 +207,19 @@ namespace Unit.Infra.Services
                 {
                     resultado = resultado.Where(x => x.Faixa != null && x.Faixa.ToLower().Equals(condicao.Faixa.ToLower())).ToList();
                 }
+                if (!string.IsNullOrEmpty(condicao.Papeis))
+                {
+                    string[] papeis = condicao.Papeis.Split(',').Select(p => p.ToUpper().Trim()).ToArray();
+
+                    var _PubsNosPapeis = await _unitOfWork.PubPapeis
+                        .AsQueryable()
+                        .Include(pp => pp.Papel)
+                        .Where(pp => papeis.Contains(pp.Papel.Nome.ToUpper()))
+                        .Select(pp => pp.PubId)
+                        .ToListAsync();
+
+                    resultado = resultado.Where(x => _PubsNosPapeis.Contains(x.ID)).ToList();
+                }
 
                 retorno.Success = true;
 
@@ -218,10 +231,11 @@ namespace Unit.Infra.Services
                 else
                 {
                     var lista = resultado.Select(x => new
-                                                    { 
-                                                        ID= x.ID, 
-                                                        Nome = x.Nome 
-                                                    })
+                    {
+                        ID = x.ID,
+                        Nome = x.Nome,
+                        Genero = x.Genero
+                    })
                                          .OrderBy(x => x.Nome)
                                          .ToList();
 
@@ -299,6 +313,19 @@ namespace Unit.Infra.Services
                 if (!string.IsNullOrEmpty(condicao.Faixa))
                 {
                     resultado = resultado.Where(x => x.Faixa != null && x.Faixa.ToLower().Equals(condicao.Faixa.ToLower())).ToList();
+                }
+                if (!string.IsNullOrEmpty(condicao.Papeis))
+                {
+                    string[] papeis = condicao.Papeis.Split(',').Select(p => p.ToUpper().Trim()).ToArray();
+
+                    var _PubsNosPapeis = await _unitOfWork.PubPapeis
+                        .AsQueryable()
+                        .Include(pp => pp.Papel)
+                        .Where(pp => papeis.Contains(pp.Papel.Nome.ToUpper()))
+                        .Select(pp => pp.PubId)
+                        .ToListAsync();
+
+                    resultado = resultado.Where(x => _PubsNosPapeis.Contains(x.ID)).ToList();
                 }
 
                 retorno.Success = true;
@@ -590,7 +617,7 @@ namespace Unit.Infra.Services
                     registro.NomeCompleto = dados.NomeCompleto;
                     registro.Nascimento = !string.IsNullOrEmpty(dados.Nascimento) ? DateTime.Parse(dados.Nascimento) : null;
                     registro.Batismo = !string.IsNullOrEmpty(dados.Batismo) ? DateTime.Parse(dados.Batismo) : null;
-                    registro.AuxiliarAte= !string.IsNullOrEmpty(dados.AuxiliarAte) ? DateTime.Parse(dados.AuxiliarAte) : null;
+                    registro.AuxiliarAte = !string.IsNullOrEmpty(dados.AuxiliarAte) ? DateTime.Parse(dados.AuxiliarAte) : null;
                     registro.Situacao = dados.Situacao.Replace("_", " ");
                     registro.Privilegio = dados.Privilegio.Replace("_", " ");
                     registro.Orador = dados.Orador;
@@ -644,7 +671,7 @@ namespace Unit.Infra.Services
 
             return retorno;
         }
-       
+
         #endregion
 
         #region Grupo

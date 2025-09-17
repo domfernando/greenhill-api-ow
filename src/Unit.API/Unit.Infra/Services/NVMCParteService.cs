@@ -160,13 +160,13 @@ namespace Unit.Infra.Services
                 else
                 {
                     existente.Alterado = DateTime.Now;
-                    existente.NVMCID = entidade.NVMCId;
-                    existente.NomeSecao = entidade.NomeSecao;
+                    //existente.NVMCID = entidade.NVMCId;
+                    //existente.NomeSecao = entidade.NomeSecao;
                     existente.Titulo = entidade.Titulo;
                     existente.Descricao = entidade.Descricao;
                     existente.DesignadoID = entidade.DesignadoId > 0 ? entidade.DesignadoId : null;
                     existente.AjudanteID = entidade.AjudanteId > 0 ? entidade.AjudanteId : null;
-                    existente.Privilegio = entidade.Privilegio;
+                    //existente.Privilegio = entidade.Privilegio;
 
 
                     _unitOfWork.NVMCPartes.Update(existente);

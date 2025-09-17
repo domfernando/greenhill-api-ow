@@ -38,11 +38,11 @@
     public class UpdateNVMCParteRequest
     {
         public int Id { get; set; }
-        public int NVMCId { get; set; }
-        public string NomeSecao { get; set; }
+        //public int NVMCId { get; set; }
+        //public string NomeSecao { get; set; }
         public string Titulo { get; set; }
         public string? Descricao { get; set; }
-        public string? Privilegio { get; set; }
+        //public string? Privilegio { get; set; }
         public int? DesignadoId { get; set; } = 0;
         public int? AjudanteId { get; set; } = 0;
     }
@@ -51,12 +51,14 @@
 
     public class NVMCApostilaRequest
     {
-        public List<NVMCSemanaRequest> Semanas { get; set; } = new List<NVMCSemanaRequest>();
+        public List<NVMCSemanaRequest> Semanas { get; set; } = new List<NVMCSemanaRequest>();        
+        public List<NVMCParteRequest> Partes { get; set; }
     }
 
     public class NVMCSemanaRequest
     {
         public DateTime Data { get; set; } // Data da quinta-feira
+        public string Semana { get; set; }
         public string Mes { get; set; } = string.Empty;
         public string Presidente { get; set; } = string.Empty;
         public string OracaoInicial { get; set; } = string.Empty;
@@ -82,6 +84,8 @@
 
     public class NVMCParteRequest
     {
+        public DateTime Data { get; set; } 
+        public string Semana { get; set; }
         public string Titulo { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
         public string Designado { get; set; } = string.Empty;

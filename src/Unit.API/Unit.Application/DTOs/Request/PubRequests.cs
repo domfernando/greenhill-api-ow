@@ -14,6 +14,7 @@ namespace Unit.Application.DTOs.Request
         public string? Dianteira { get; set; }
         public string? Escola { get; set; }
         public bool? Orador { get; set; }
+        public string? Papeis { get; set; }
     }
 
     public class PubNewModel

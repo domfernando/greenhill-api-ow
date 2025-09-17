@@ -8,7 +8,12 @@ namespace Unit.Application.Services
     {
         Task<Reply> GetOne(int id);
         Task<Reply> GetAll(QueryNVMCRequest condicao);
+        Task<Reply> GetList(QueryNVMCRequest condicao);
         Task<Reply> Add(NVMC entidade);
-        Task<Reply> Update(UpdateNVMCRequest entidade);   
+        Task<Reply> Update(UpdateNVMCRequest entidade);
+        Task<Reply> GetOneParte(int id);
+        Task<Reply> GetPartesByPub(int pubId);
+        Task<Reply> GetGraficoPartesByPub(int pubId);
+        Task<Reply> UpdateParte(UpdateNVMCParteRequest entidade);
     }
 }
